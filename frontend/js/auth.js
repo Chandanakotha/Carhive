@@ -1,19 +1,23 @@
 /* Authentication Logic */
 
+// --- Real Login (Formerly simulateLogin) ---
 async function simulateLogin() {
+    var emailInput = document.getElementById('login-email');
+    var passwordInput = document.getElementById('login-password');
+
+    if (!emailInput || !passwordInput || !emailInput.value || !passwordInput.value) {
+        alert('Please enter both email and password.');
+        return;
+    }
+
+    const email = emailInput.value;
+    const password = passwordInput.value;
+
+    const formData = new URLSearchParams();
+    formData.append('username', email);
+    formData.append('password', password);
+
     try {
-        const emailInput = document.getElementById('login-email');
-        const passwordInput = document.getElementById('login-password');
-
-        if (!emailInput?.value || !passwordInput?.value) {
-            alert('Please enter both email and password.');
-            return;
-        }
-
-        const formData = new URLSearchParams();
-        formData.append('username', emailInput.value);
-        formData.append('password', passwordInput.value);
-
         const response = await fetch("https://carhive.onrender.com/api/v1/auth/login", {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -23,13 +27,14 @@ async function simulateLogin() {
         const data = await response.json();
 
         if (response.ok) {
-            localStorage.setItem('token', data.access_token);
+            const token = data.access_token;
+            localStorage.setItem('token', token);
             localStorage.setItem('isLoggedIn', 'true');
 
-            // Fetch user info safely
+            // Fetch user info for profile.html compatibility
             try {
                 const meRes = await fetch("https://carhive.onrender.com/api/v1/auth/me", {
-                    headers: { 'Authorization': 'Bearer ' + data.access_token }
+                    headers: { 'Authorization': 'Bearer ' + token }
                 });
                 if (meRes.ok) {
                     const meData = await meRes.json();
@@ -44,13 +49,16 @@ async function simulateLogin() {
                 console.error("Could not fetch user profile", e);
             }
 
-            checkAuthState();
-            renderDiscoveryCars();
+            // Refresh UI
+            if (typeof checkAuthState === 'function') checkAuthState();
+            if (typeof renderDiscoveryCars === 'function') renderDiscoveryCars();
 
+            // Clear inputs
             emailInput.value = '';
             passwordInput.value = '';
+
             alert('Logged in successfully!');
-            closeModal?.();
+            if (typeof closeModal === 'function') closeModal();
         } else {
             alert(data.detail || 'Login failed. Please check your credentials.');
         }
@@ -60,15 +68,26 @@ async function simulateLogin() {
     }
 }
 
+// Check if user is logged in on page load
 function checkAuthState() {
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    const loginItem = document.getElementById('login-item');
-    const addCarItem = document.getElementById('add-car-item');
-    const profileDivider = document.getElementById('profile-divider');
-    const profileItem = document.getElementById('profile-item');
+    var isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
 
-    if (loginItem) loginItem.style.display = isLoggedIn ? 'none' : 'block';
-    if (addCarItem) addCarItem.style.display = isLoggedIn ? 'block' : 'none';
-    if (profileDivider) profileDivider.style.display = isLoggedIn ? 'block' : 'none';
-    if (profileItem) profileItem.style.display = isLoggedIn ? 'block' : 'none';
+    var loginItem = document.getElementById('login-item');
+    var addCarItem = document.getElementById('add-car-item');
+    var profileDivider = document.getElementById('profile-divider');
+    var profileItem = document.getElementById('profile-item');
+
+    if (isLoggedIn) {
+        if (loginItem) loginItem.style.display = 'none';
+        if (addCarItem) addCarItem.style.display = 'block';
+        if (profileDivider) profileDivider.style.display = 'block';
+        if (profileItem) profileItem.style.display = 'block';
+    } else {
+        if (loginItem) loginItem.style.display = 'block';
+        if (addCarItem) addCarItem.style.display = 'none';
+        if (profileDivider) profileDivider.style.display = 'none';
+        if (profileItem) profileItem.style.display = 'none';
+    }
 }
+
+
