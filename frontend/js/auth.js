@@ -1,19 +1,19 @@
-/* auth.js - Authentication Logic */
+/* Authentication Logic */
 
-async function loginUser() {
-    const emailInput = document.getElementById('login-email');
-    const passwordInput = document.getElementById('login-password');
-
-    if (!emailInput.value || !passwordInput.value) {
-        alert('Please enter both email and password.');
-        return;
-    }
-
-    const formData = new URLSearchParams();
-    formData.append('username', emailInput.value);
-    formData.append('password', passwordInput.value);
-
+async function simulateLogin() {
     try {
+        const emailInput = document.getElementById('login-email');
+        const passwordInput = document.getElementById('login-password');
+
+        if (!emailInput?.value || !passwordInput?.value) {
+            alert('Please enter both email and password.');
+            return;
+        }
+
+        const formData = new URLSearchParams();
+        formData.append('username', emailInput.value);
+        formData.append('password', passwordInput.value);
+
         const response = await fetch("https://carhive.onrender.com/api/v1/auth/login", {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -23,14 +23,13 @@ async function loginUser() {
         const data = await response.json();
 
         if (response.ok) {
-            const token = data.access_token;
-            localStorage.setItem('token', token);
+            localStorage.setItem('token', data.access_token);
             localStorage.setItem('isLoggedIn', 'true');
 
-            // Fetch user profile
+            // Fetch user info safely
             try {
                 const meRes = await fetch("https://carhive.onrender.com/api/v1/auth/me", {
-                    headers: { 'Authorization': 'Bearer ' + token }
+                    headers: { 'Authorization': 'Bearer ' + data.access_token }
                 });
                 if (meRes.ok) {
                     const meData = await meRes.json();
@@ -45,16 +44,15 @@ async function loginUser() {
                 console.error("Could not fetch user profile", e);
             }
 
-            if (typeof checkAuthState === 'function') checkAuthState();
-            if (typeof renderDiscoveryCars === 'function') renderDiscoveryCars();
+            checkAuthState();
+            renderDiscoveryCars();
 
             emailInput.value = '';
             passwordInput.value = '';
-
             alert('Logged in successfully!');
-            if (typeof closeModal === 'function') closeModal();
+            closeModal?.();
         } else {
-            alert(data.detail || 'Login failed. Check your credentials.');
+            alert(data.detail || 'Login failed. Please check your credentials.');
         }
     } catch (err) {
         console.error("Login error:", err);
@@ -64,21 +62,13 @@ async function loginUser() {
 
 function checkAuthState() {
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-
     const loginItem = document.getElementById('login-item');
     const addCarItem = document.getElementById('add-car-item');
     const profileDivider = document.getElementById('profile-divider');
     const profileItem = document.getElementById('profile-item');
 
-    if (isLoggedIn) {
-        if (loginItem) loginItem.style.display = 'none';
-        if (addCarItem) addCarItem.style.display = 'block';
-        if (profileDivider) profileDivider.style.display = 'block';
-        if (profileItem) profileItem.style.display = 'block';
-    } else {
-        if (loginItem) loginItem.style.display = 'block';
-        if (addCarItem) addCarItem.style.display = 'none';
-        if (profileDivider) profileDivider.style.display = 'none';
-        if (profileItem) profileItem.style.display = 'none';
-    }
+    if (loginItem) loginItem.style.display = isLoggedIn ? 'none' : 'block';
+    if (addCarItem) addCarItem.style.display = isLoggedIn ? 'block' : 'none';
+    if (profileDivider) profileDivider.style.display = isLoggedIn ? 'block' : 'none';
+    if (profileItem) profileItem.style.display = isLoggedIn ? 'block' : 'none';
 }
