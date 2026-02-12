@@ -8,7 +8,7 @@ let globalAllCars = [];
 // because that creates stale data when other users or pages modify the database.
 async function fetchCarsFromApi() {
     try {
-        const response = await fetch('https://carhive.onrender.com/api/v1');
+        const response = await fetch('https://carhive.onrender.com/api/v1/cars');
         if (response.ok) {
             const apiCars = await response.json();
             // Map backend fields to frontend format - PRESERVE BACKEND ID
@@ -40,6 +40,7 @@ async function fetchCarsFromApi() {
 
     return [];
 }
+
 
 
 
