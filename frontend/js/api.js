@@ -1,19 +1,23 @@
-/* API Handling */
+/* api.js - API Handling */
 
-// Global cache for cars - ONLY used for current page session, NOT persisted
+// Global cache for cars
 let globalAllCars = [];
 
-// Fetch from Backend API
-// WHY: Backend is the single source of truth. We NEVER cache to localStorage
-// because that creates stale data when other users or pages modify the database.
-async function fetchCarsFromApi() {
+/**
+ * Fetch cars from backend API
+ * Returns mapped array of cars
+ */
+async function fetchCarsFromApi(token = null) {
     try {
-        const response = await fetch('https://carhive.onrender.com/api/v1/cars/');
+        const headers = {};
+        if (token) headers['Authorization'] = 'Bearer ' + token;
+
+        const response = await fetch('https://carhive.onrender.com/api/v1/cars/', { headers });
+
         if (response.ok) {
             const apiCars = await response.json();
-            // Map backend fields to frontend format - PRESERVE BACKEND ID
             globalAllCars = apiCars.map(car => ({
-                id: car.id, // CRITICAL: Backend database ID for DELETE/PUT operations
+                id: car.id,
                 name: car.name,
                 place: car.location,
                 contact: car.contact,
@@ -27,18 +31,13 @@ async function fetchCarsFromApi() {
                 available: car.availability_status
             }));
 
-            // WHY: We do NOT save to localStorage anymore. 
-            // Every page load fetches fresh data from the backend.
-            // This ensures deletions and edits are immediately visible everywhere.
-
             return globalAllCars;
+        } else {
+            console.warn('API fetchCars failed:', response.statusText);
         }
-    } catch (e) {
-        console.warn("Backend API unreachable:", e);
-        return [];
+    } catch (err) {
+        console.error("Backend API unreachable:", err);
     }
 
     return [];
 }
-
-
