@@ -1,19 +1,12 @@
-/* api.js - API Handling */
+/* API Handling */
 
-// Global cache for cars
+// Global cache for cars - ONLY used for current page session
 let globalAllCars = [];
 
-/**
- * Fetch cars from backend API
- * Returns mapped array of cars
- */
-async function fetchCarsFromApi(token = null) {
+// Fetch from Backend API
+async function fetchCarsFromApi() {
     try {
-        const headers = {};
-        if (token) headers['Authorization'] = 'Bearer ' + token;
-
-        const response = await fetch('https://carhive.onrender.com/api/v1/cars/', { headers });
-
+        const response = await fetch('https://carhive.onrender.com/api/v1/cars/');
         if (response.ok) {
             const apiCars = await response.json();
             globalAllCars = apiCars.map(car => ({
@@ -30,14 +23,13 @@ async function fetchCarsFromApi(token = null) {
                 host: car.host || (car.owner && car.owner.full_name) || 'Car Owner',
                 available: car.availability_status
             }));
-
             return globalAllCars;
         } else {
-            console.warn('API fetchCars failed:', response.statusText);
+            console.warn("Backend returned error:", response.status);
+            return [];
         }
-    } catch (err) {
-        console.error("Backend API unreachable:", err);
+    } catch (e) {
+        console.warn("Backend API unreachable:", e);
+        return [];
     }
-
-    return [];
 }
