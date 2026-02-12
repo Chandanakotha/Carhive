@@ -39,6 +39,11 @@ async def root():
         "docs": "/docs",
         "status": "Running"
     }
+@app.on_event("startup")
+async def on_startup():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
 
 # Small TODO: Add custom exception handlers for a cleaner global error response format
+
 
