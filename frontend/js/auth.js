@@ -18,7 +18,7 @@ async function simulateLogin() {
     formData.append('password', password);
 
     try {
-        const response = await fetch("https://carhive.onrender.com/api/v1/auth/login", {
+        const response = await fetch("https://carhive.onrender.com/api/v1", {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: formData
@@ -33,7 +33,7 @@ async function simulateLogin() {
 
             // Fetch user info for profile.html compatibility
             try {
-                const meRes = await fetch("https://carhive.onrender.com/api/v1/auth/me", {
+                const meRes = await fetch("https://carhive.onrender.com/api/v1", {
                     headers: { 'Authorization': 'Bearer ' + token }
                 });
                 if (meRes.ok) {
@@ -89,5 +89,6 @@ function checkAuthState() {
         if (profileItem) profileItem.style.display = 'none';
     }
 }
+
 
 
