@@ -1,10 +1,10 @@
-# 🚀 Carvia Deployment Guide
+#  Carhivee Deployment Guide
 
 This guide covers deploying Carvia in various environments.
 
 ---
 
-## 📋 Prerequisites
+## Prerequisites
 
 - **Python 3.10+**
 - **Docker & Docker Compose** (for containerized deployment)
@@ -13,7 +13,7 @@ This guide covers deploying Carvia in various environments.
 
 ---
 
-## 🏃 Quick Start (Local Development)
+##  Quick Start (Local Development)
 
 ### Option 1: Manual Setup
 
@@ -80,7 +80,7 @@ docker-compose down
 
 ---
 
-## 🌐 Production Deployment
+##  Production Deployment
 
 ### Backend Deployment (FastAPI)
 
@@ -154,7 +154,7 @@ server {
 
 ---
 
-## 🔧 Configuration
+##  Configuration
 
 ### Environment Variables
 
@@ -188,7 +188,7 @@ const API_BASE_URL = 'https://your-backend-domain.com';
 
 ---
 
-## 🗄️ Database Setup
+##  Database Setup
 
 ### Development (SQLite)
 ```bash
@@ -218,7 +218,7 @@ python reset_database.py
 
 ---
 
-## 🧪 Testing the Deployment
+##  Testing the Deployment
 
 ### 1. Test Backend API
 ```bash
@@ -241,7 +241,7 @@ open https://carhive.onrender.com/api/v1/docs
 
 ---
 
-## 🐛 Troubleshooting
+##  Troubleshooting
 
 ### Backend Issues
 
@@ -278,7 +278,7 @@ uvicorn app.main:app --reload --port 8001
 
 ---
 
-## 📊 Monitoring & Logs
+##  Monitoring & Logs
 
 ### View Backend Logs
 ```bash
@@ -305,7 +305,7 @@ SELECT * FROM cars;
 
 ---
 
-## 🔒 Security Checklist
+##  Security Checklist
 
 Before deploying to production:
 
@@ -321,7 +321,7 @@ Before deploying to production:
 
 ---
 
-## 📈 Scaling Considerations
+##  Scaling Considerations
 
 ### Backend Scaling
 - Use Gunicorn with multiple workers:
@@ -340,7 +340,7 @@ Before deploying to production:
 
 ---
 
-## 🆘 Support
+##  Support
 
 If you encounter issues:
 
@@ -352,7 +352,7 @@ If you encounter issues:
 
 ---
 
-## 📝 Notes
+##  Notes
 
 - **Default Admin Account:** Created during database initialization (check `reset_database.py`)
 - **Sample Data:** The database is seeded with sample cars for testing
@@ -360,5 +360,4 @@ If you encounter issues:
 
 ---
 
-**Happy Deploying! 🎉**
 
