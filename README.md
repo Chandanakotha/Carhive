@@ -1,12 +1,12 @@
-# Carvia 🚗
+# Carhivee
 
 ### *Find the right car, wherever you are.*
 
-Carvia is a modern peer-to-peer car rental platform inspired by industry leaders. It connects car owners (Dealers) with travelers (Clients) through a seamless digital experience.
+Carhivee is a modern peer-to-peer car rental platform inspired by industry leaders. It connects car owners (Dealers) with travelers (Clients) through a seamless digital experience.
 
 ---
 
-## 🚀 What Problem Does Carvia Solve?
+##  What Problem Does Carvia Solve?
 
 Carvia simplifies the car rental process by:
 - **Removing the counter**: Rent directly from local owners.
@@ -15,21 +15,21 @@ Carvia simplifies the car rental process by:
 
 ---
 
-## ✨ Key Features
+##  Key Features
 
-### 🏢 For Dealers (Car Owners)
+### For Dealers (Car Owners)
 - **Easy Listing**: Add a car in seconds with photos and details.
 - **Inventory Management**: View, edit, or delete listings from a personal dashboard.
 - **Availability Control**: Toggle car availability instantly.
 
-### 👤 For Clients (Renters)
+###  For Clients (Renters)
 - **Advanced Search**: Filter by location, car type, and seat capacity.
 - **Guest Preview**: Browse top listings even without an account.
 - **Seamless Booking**: Inspect detailed car profiles and book directly.
 
 ---
 
-## 🛠️ Technology Stack
+##  Technology Stack
 
 ### **Frontend** (Client-Side)
 - **HTML5**: semantic structure.
@@ -44,7 +44,7 @@ Carvia simplifies the car rental process by:
 
 ---
 
-## 🏗️ High-Level Architecture
+##  High-Level Architecture
 
 Carvia follows a **RESTful Client-Server** architecture:
 
@@ -54,7 +54,7 @@ Carvia follows a **RESTful Client-Server** architecture:
 
 ---
 
-## 🏃 How to Run Locally
+## How to Run Locally
 
 ### Prerequisites
 - Python 3.10+
@@ -87,17 +87,14 @@ Carvia follows a **RESTful Client-Server** architecture:
 
 ---
 
-## 📸 Screenshots
+##  Live Demo
 
-*(Placeholders for future screenshots)*
-
-*   **Homepage**: Hero banner with search functionality.
-*   **Car Listing**: Grid view of available vehicles.
-*   **Car Details**: Detailed view with specs and booking options.
-*   **Add Car Form**: The dealer interface for listing vehicles.
+ **Try the app here:**  
+https://carhivee.netlify.app/
 
 ---
 
 ## ⚠️ Disclaimer
-*Carvia is a portfolio project model inspired by modern car-rental platforms. It is designed for educational and demonstration purposes.*
+*Carhivee is a portfolio project model inspired by modern car-rental platforms. It is designed for educational and demonstration purposes.*
+
 
