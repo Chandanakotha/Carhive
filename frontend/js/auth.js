@@ -1,21 +1,17 @@
-/* Authentication Logic */
+/* auth.js - Authentication Logic */
 
-// --- Real Login (Formerly simulateLogin) ---
-async function simulateLogin() {
-    var emailInput = document.getElementById('login-email');
-    var passwordInput = document.getElementById('login-password');
+async function loginUser() {
+    const emailInput = document.getElementById('login-email');
+    const passwordInput = document.getElementById('login-password');
 
-    if (!emailInput || !passwordInput || !emailInput.value || !passwordInput.value) {
+    if (!emailInput.value || !passwordInput.value) {
         alert('Please enter both email and password.');
         return;
     }
 
-    const email = emailInput.value;
-    const password = passwordInput.value;
-
     const formData = new URLSearchParams();
-    formData.append('username', email);
-    formData.append('password', password);
+    formData.append('username', emailInput.value);
+    formData.append('password', passwordInput.value);
 
     try {
         const response = await fetch("https://carhive.onrender.com/api/v1/auth/login", {
@@ -31,7 +27,7 @@ async function simulateLogin() {
             localStorage.setItem('token', token);
             localStorage.setItem('isLoggedIn', 'true');
 
-            // Fetch user info for profile.html compatibility
+            // Fetch user profile
             try {
                 const meRes = await fetch("https://carhive.onrender.com/api/v1/auth/me", {
                     headers: { 'Authorization': 'Bearer ' + token }
@@ -49,18 +45,16 @@ async function simulateLogin() {
                 console.error("Could not fetch user profile", e);
             }
 
-            // Refresh UI
             if (typeof checkAuthState === 'function') checkAuthState();
             if (typeof renderDiscoveryCars === 'function') renderDiscoveryCars();
 
-            // Clear inputs
             emailInput.value = '';
             passwordInput.value = '';
 
             alert('Logged in successfully!');
             if (typeof closeModal === 'function') closeModal();
         } else {
-            alert(data.detail || 'Login failed. Please check your credentials.');
+            alert(data.detail || 'Login failed. Check your credentials.');
         }
     } catch (err) {
         console.error("Login error:", err);
@@ -68,14 +62,13 @@ async function simulateLogin() {
     }
 }
 
-// Check if user is logged in on page load
 function checkAuthState() {
-    var isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
 
-    var loginItem = document.getElementById('login-item');
-    var addCarItem = document.getElementById('add-car-item');
-    var profileDivider = document.getElementById('profile-divider');
-    var profileItem = document.getElementById('profile-item');
+    const loginItem = document.getElementById('login-item');
+    const addCarItem = document.getElementById('add-car-item');
+    const profileDivider = document.getElementById('profile-divider');
+    const profileItem = document.getElementById('profile-item');
 
     if (isLoggedIn) {
         if (loginItem) loginItem.style.display = 'none';
@@ -89,5 +82,3 @@ function checkAuthState() {
         if (profileItem) profileItem.style.display = 'none';
     }
 }
-
-
