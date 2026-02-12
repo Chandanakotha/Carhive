@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bookings - Turo Clone</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <style>
+        .booking-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: var(--space-md);
+            background: white;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 1px solid var(--turo-border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .booking-table th,
+        .booking-table td {
+            text-align: left;
+            padding: var(--space-sm) var(--space-md);
+            border-bottom: 1px solid var(--turo-border);
+        }
+
+        .booking-table th {
+            background: var(--turo-bg);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 800;
+            color: var(--turo-muted);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .status-confirmed {
+            background: var(--turo-purple-light);
+            color: var(--turo-purple);
+        }
+
+        .status-pending {
+            background: #fff9db;
+            color: #f08c00;
+        }
+
+        .status-cancelled {
+            background: #fff5f5;
+            color: #c92a2a;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container nav-container">
+            <nav class="top-left-menu" id="top-menu">
+                <!-- Dynamically populated by utils.js -->
+            </nav>
+            <a href="index.html" class="logo">TURO</a>
+            <div class="top-right-menu">
+                <a href="#"
+                    style="text-decoration: none; color: var(--turo-text); font-weight: 600; font-size: 0.95rem;">Become
+                    a host</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section>
+            <h1 style="font-size: 3rem; font-weight: 900; letter-spacing: -2px; line-height: 1;">Your booked trips</h1>
+            <p style="color: var(--turo-muted); margin-top: 10px; font-size: 1.1rem;">Track your upcoming and past
+                adventures</p>
+
+            <div id="booking-view" style="margin-top: var(--space-lg);">
+                <div style="padding: 100px 0; text-align: center;">
+                    <p style="color: var(--turo-muted);">Checking your schedule...</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/utils.js"></script>
+    <script>
+        async function loadBookings() {
+            if (!localStorage.getItem('token')) { window.location.href = 'index.html'; return; }
+            try {
+                const response = await api.get('/bookings/');
+                const bookings = await response.json();
+                const container = document.getElementById('booking-view');
+
+                if (bookings.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 100px 0; background: var(--turo-bg); border-radius: var(--radius-lg);">
+                            <h2 style="font-weight: 800; font-size: 1.5rem;">No trips yet</h2>
+                            <p style="color: var(--turo-muted); margin-top: 10px;">Your next adventure is just a few clicks away.</p>
+                            <a href="index.html" class="btn-book" style="display: inline-block; width: auto; padding: 12px 30px; margin-top: 25px; text-decoration: none;">Find a car</a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let html = `
+                    <table class="booking-table">
+                        <thead>
+                            <tr>
+                                <th>Car</th>
+                                <th>Dates</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                bookings.forEach(b => {
+                    const statusClass = b.status === 'CONFIRMED' ? 'status-confirmed' : (b.status === 'CANCELLED' ? 'status-cancelled' : 'status-pending');
+                    html += `
+                        <tr>
+                            <td>
+                                <div style="font-weight: 700; font-size: 1.1rem;">${b.car_make} ${b.car_model}</div>
+                                <div style="font-size: 0.75rem; color: var(--turo-muted); margin-top: 2px;">CONFIRMATION: #${b.id}</div>
+                            </td>
+                            <td>
+                                <div style="font-weight: 600;">${new Date(b.start_date).toLocaleDateString()} - ${new Date(b.end_date).toLocaleDateString()}</div>
+                            </td>
+                            <td style="font-weight: 800; color: var(--turo-purple);">$${b.total_price}</td>
+                            <td><span class="status-badge ${statusClass}">${b.status}</span></td>
+                        </tr>
+                    `;
+                });
+
+                html += '</tbody></table>';
+                container.innerHTML = html;
+
+            } catch (err) {
+                console.error(err);
+                document.getElementById('booking-view').innerHTML = '<p style="text-align: center; color: var(--danger); font-weight: 700;">Error loading bookings. Please try again later.</p>';
+            }
+        }
+
+        loadBookings();
+    </script>
+</body>
+
+</html>
+

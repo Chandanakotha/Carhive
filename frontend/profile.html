@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Profile | Turo Clone</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body style="background: #f4f4f4;">
+
+    <div class="container">
+        <header>
+            <div class="logo"><a href="index.html">CarHive</a></div>
+            <div class="nav-right">
+                <button class="btn-secondary" onclick="logout()">Logout</button>
+            </div>
+        </header>
+
+        <main class="details-grid" style="margin-top: 40px;">
+
+            <!-- Left: User Details & Edit -->
+            <div style="background: white; padding: 40px; border-radius: 20px;">
+                <h1 style="font-size: 32px; font-weight: 800; margin-bottom: 24px;">Your Details</h1>
+                <form id="profile-form">
+                    <div style="margin-bottom: 20px;">
+                        <label
+                            style="display: block; font-size: 11px; font-weight: 800; color: #777; margin-bottom: 5px;">FULL
+                            NAME</label>
+                        <input type="text" id="user-name" required
+                            style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px;">
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label
+                            style="display: block; font-size: 11px; font-weight: 800; color: #777; margin-bottom: 5px;">PHONE
+                            NUMBER</label>
+                        <input type="text" id="user-phone" required
+                            style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px;">
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label
+                            style="display: block; font-size: 11px; font-weight: 800; color: #777; margin-bottom: 5px;">PLACE
+                            / LOCATION</label>
+                        <input type="text" id="user-place" required
+                            style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px;">
+                    </div>
+                    <button type="submit" class="btn-book" style="margin-top: 10px;">Save Profile Changes</button>
+                </form>
+
+                <!-- Bookings List (Conditional) -->
+                <div id="bookings-section" style="display: none;">
+                    <h2 style="font-size: 24px; font-weight: 800; margin-top: 50px; margin-bottom: 20px;">Previous
+                        Bookings</h2>
+                    <div id="bookings-list">
+                        <!-- Bookings will be injected here if they exist -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Added Cars -->
+            <div style="background: white; padding: 40px; border-radius: 20px;">
+                <h2 style="font-size: 32px; font-weight: 800; margin-bottom: 24px;">Your Cars</h2>
+                <div id="cars-list">
+                    <!-- Cars will be injected here -->
+                    <p id="no-cars" style="color: #777;">You haven't added any cars yet.</p>
+                </div>
+                <a href="add-car.html" class="btn-secondary"
+                    style="display: block; text-align: center; margin-top: 30px;">Add another car</a>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        // 1. Load User Data
+        var token = localStorage.getItem('token');
+        var isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        var user = JSON.parse(localStorage.getItem('turo_user') || '{}');
+
+        // Allow entry if logged in, but token is preferred
+        if (!isLoggedIn && !token) {
+            window.location.href = 'login.html';
+        }
+
+        // Populate existing local data first
+        if (user.name) document.getElementById('user-name').value = user.name;
+        if (user.phone) document.getElementById('user-phone').value = user.phone;
+        if (user.place) document.getElementById('user-place').value = user.place;
+
+        // Fetch fresh user data from backend
+        async function fetchUserProfile() {
+            try {
+                const response = await fetch('https://carhive.onrender.com/api/v1/auth/me', {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('user-name').value = data.full_name || "";
+                    document.getElementById('user-phone').value = data.phone || "";
+                    document.getElementById('user-place').value = data.location || "";
+                    // Update localStorage to keep it in sync
+                    const updatedUser = {
+                        name: data.full_name,
+                        email: data.email,
+                        phone: data.phone || "",
+                        place: data.location || ""
+                    };
+                    localStorage.setItem('turo_user', JSON.stringify(updatedUser));
+                }
+            } catch (e) { console.error("Error fetching profile:", e); }
+        }
+        fetchUserProfile();
+
+        // 2. Load Added Cars from Backend (NOT localStorage)
+        // WHY: We fetch from backend to ensure we see the latest state after any deletions/edits
+        async function loadUserCars() {
+            try {
+                const response = await fetch('https://carhive.onrender.com/api/v1/cars/my', {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                if (!response.ok) {
+                    console.warn("Failed to fetch cars from backend");
+                    return;
+                }
+
+                const apiCars = await response.json();
+
+                // Map to frontend format
+                const cars = apiCars.map(car => ({
+                    id: car.id,
+                    name: car.name,
+                    place: car.location,
+                    contact: car.contact,
+                    type: car.car_type || 'Sedan',
+                    seaters: String(car.seaters || '4'),
+                    price: car.price_per_day,
+                    priceType: car.price_type || 'day',
+                    features: car.features,
+                    photo: car.photo || 'images/default-car.png',
+                    host: car.host || 'Car Owner',
+                    available: car.availability_status
+                }));
+
+                var list = document.getElementById('cars-list');
+                if (cars.length > 0) {
+                    document.getElementById('no-cars').style.display = 'none';
+
+                    // DEBUG: Log all car IDs to verify they exist
+                    console.log("Loaded cars from backend:", cars.map(c => ({ id: c.id, name: c.name })));
+
+                    cars.forEach(function (car, carIndex) {
+                        // CRITICAL: Verify car has an ID
+                        if (!car.id) {
+                            console.error("Car missing ID:", car);
+                            return; // Skip this car
+                        }
+
+                        var div = document.createElement('div');
+                        div.style.padding = '15px';
+                        div.style.borderBottom = '1px solid #eee';
+                        div.style.display = 'flex';
+                        div.style.gap = '15px';
+                        div.style.alignItems = 'center';
+                        div.style.justifyContent = 'space-between';
+
+                        var availabilityStatus = car.available !== false ? 'Available' : 'Unavailable';
+                        var dotColor = car.available !== false ? 'green' : 'red';
+
+                        div.innerHTML = `
+                        <div style="display: flex; gap: 15px; align-items: center;">
+                            <img src="${car.photo}" style="width: 80px; height: 50px; border-radius: 8px; object-fit: cover;">
+                            <div>
+                                <p style="font-weight: 700; margin-bottom: 2px;">${car.name}</p>
+                                <p style="font-size: 13px; color: #777;">${car.place}</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button onclick="editCar(${car.id})" style="padding: 8px 16px; border: 1px solid #5933ff; border-radius: 8px; background: white; color: #5933ff; cursor: pointer; font-size: 13px; font-weight: 600;">
+                                Edit
+                            </button>
+                            <button onclick="toggleAvailability(${car.id})" style="padding: 8px 16px; border: 1px solid #ddd; border-radius: 8px; background: white; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 13px;">
+                                <div style="width: 10px; height: 10px; background: ${dotColor}; border-radius: 50%;"></div>
+                                ${availabilityStatus}
+                            </button>
+                            <button onclick="deleteCar(${car.id})" style="padding: 8px 16px; border: 1px solid #ff4444; border-radius: 8px; background: white; color: #ff4444; cursor: pointer; font-size: 13px; font-weight: 600;">
+                                Delete
+                            </button>
+                        </div>
+                    `;
+                        list.appendChild(div);
+                    });
+                }
+            } catch (e) {
+                console.error("Error loading cars:", e);
+            }
+        }
+
+        // Load cars on page load
+        loadUserCars();
+
+        // 2.5 Load Previous Bookings (if they exist)
+        var bookings = JSON.parse(localStorage.getItem('user_bookings') || '[]');
+        if (bookings.length > 0) {
+            document.getElementById('bookings-section').style.display = 'block';
+            var bookingsList = document.getElementById('bookings-list');
+            bookings.forEach(function (booking) {
+                var div = document.createElement('div');
+                div.style.padding = '20px';
+                div.style.background = '#f9f9f9';
+                div.style.borderRadius = '12px';
+                div.style.border = '1px solid #eee';
+                div.style.marginBottom = '10px';
+
+                div.innerHTML = `
+                    <p style="font-weight: 700;">${booking.carName}</p>
+                    <p style="font-size: 13px; color: #777;">${booking.details}</p>
+                `;
+                bookingsList.appendChild(div);
+            });
+        }
+
+        // 3. Handle Save
+        document.getElementById('profile-form').onsubmit = async function (e) {
+            e.preventDefault();
+            const updatedData = {
+                full_name: document.getElementById('user-name').value,
+                phone: document.getElementById('user-phone').value,
+                location: document.getElementById('user-place').value
+            };
+
+            try {
+                const response = await fetch('https://carhive.onrender.com/api/v1/auth/me', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify(updatedData)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    localStorage.setItem('turo_user', JSON.stringify({
+                        name: data.full_name,
+                        email: data.email,
+                        phone: data.phone || "",
+                        place: data.location || ""
+                    }));
+                    alert('Profile saved successfully!');
+                } else if (response.status === 401) {
+                    alert('Session expired. Please log in again.');
+                    window.location.href = 'login.html';
+                } else {
+                    alert('Failed to save profile on server.');
+                }
+            } catch (err) {
+                console.error("Error saving profile:", err);
+                alert('Connection error. Failed to save profile.');
+            }
+        };
+
+        // WHY: We use car ID (not array index) because we're working with backend database records
+        async function toggleAvailability(carId) {
+            try {
+                // Fetch current car state
+                const getResponse = await fetch('https://carhive.onrender.com/api/v1/cars/' + carId);
+                if (!getResponse.ok) return;
+
+                const car = await getResponse.json();
+
+                // Toggle availability
+                const newStatus = !car.availability_status;
+
+                // Update in backend
+                const updateResponse = await fetch('https://carhive.onrender.com/api/v1/cars/' + carId, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ availability_status: newStatus })
+                });
+
+                if (updateResponse.ok) {
+                    // WHY: Reload page to fetch fresh data from backend
+                    // This ensures the UI reflects the actual database state
+                    location.reload();
+                }
+            } catch (e) {
+                console.error("Error toggling availability:", e);
+            }
+        }
+
+        // WHY: We pass car ID directly to edit page so it can fetch latest data from backend
+        function editCar(carId) {
+            window.location.href = 'add-car.html?edit=' + carId;
+        }
+
+        // WHY: Delete from backend, then reload to show updated list
+        async function deleteCar(carId) {
+            if (confirm('Are you sure you want to delete this car? This action cannot be undone.')) {
+                try {
+                    console.log("Attempting to delete car ID:", carId);
+                    const response = await fetch('https://carhive.onrender.com/api/v1/cars/' + carId, {
+                        method: 'DELETE'
+                    });
+
+                    console.log("Delete response status:", response.status);
+
+                    if (response.ok) {
+                        console.log("Successfully deleted from backend");
+                        // WHY: Reload page to fetch fresh list from backend
+                        // The deleted car will no longer appear because it's gone from the database
+                        location.reload();
+                    } else if (response.status === 404) {
+                        console.warn("Car not found in database (ID:", carId, ")");
+                        alert("This car doesn't exist in the database. It may have been already deleted. Refreshing...");
+                        location.reload();
+                    } else {
+                        const errorText = await response.text();
+                        console.error("Backend delete failed:", response.status, errorText);
+                        alert("Failed to delete car. Status: " + response.status + ". Check console for details.");
+                    }
+                } catch (e) {
+                    console.error("Could not connect to backend:", e);
+                    alert("Error: Cannot connect to backend server. Make sure it's running on https://carhive.onrender.com/api/v1");
+                }
+            }
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+
+</html>
+

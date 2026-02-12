@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Details - Turo Clone</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+
+    <div class="container">
+        <header>
+            <div class="logo"><a href="index.html">CarHive</a></div>
+            <div class="nav-right">
+
+                <!-- Hamburger Menu Pill -->
+                <div class="hamburger-menu" onclick="toggleMenu()">
+                    <svg width="18" height="12" viewBox="0 0 18 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M0 12H18V10H0V12ZM0 7H18V5H0V7ZM0 0V2H18V0H0Z" fill="#121214" />
+                    </svg>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="11.5" stroke="#707072" />
+                        <path
+                            d="M12 6C9.79086 6 8 7.79086 8 10C8 12.2091 9.79086 14 12 14C14.2091 14 16 12.2091 16 10C16 7.79086 14.2091 6 12 6Z"
+                            fill="#707072" />
+                        <path d="M12 15C8.68629 15 6 17.6863 6 21V22H18V21C18 17.6863 15.3137 15 12 15Z"
+                            fill="#707072" />
+                    </svg>
+                </div>
+
+                <!-- Hidden Dropdown Menu -->
+                <div id="dropdown-menu" class="modal-overlay" style="display: none; background: transparent;"
+                    onclick="toggleMenu()">
+                    <div class="modal-content"
+                        style="position: absolute; top: 90px; right: 24px; text-align: left; padding: 10px 0; width: 220px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); border-radius: 12px; overflow: hidden;">
+                        <a href="#" id="login-item" class="cat-pill"
+                            style="display: block; border-radius: 0; background: transparent; padding: 12px 20px;"
+                            onclick="openModal('login-modal')">Login</a>
+                        <a href="help.html" class="cat-pill"
+                            style="display: block; border-radius: 0; background: transparent; padding: 12px 20px;">Help
+                            center</a>
+                        <a href="add-car.html" id="add-car-item" class="cat-pill"
+                            style="display: block; border-radius: 0; background: transparent; padding: 12px 20px; display: none;">Add
+                            a
+                            car</a>
+                        <hr id="profile-divider"
+                            style="border: none; border-top: 1px solid #eee; margin: 4px 0; display: none;">
+                        <a href="profile.html" id="profile-item" class="cat-pill"
+                            style="display: block; border-radius: 0; background: transparent; padding: 12px 20px; display: none;">Profile</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="details-container">
+
+            <!-- Image Gallery -->
+            <div class="gallery-main">
+                <!-- Main huge image display -->
+                <img id="main-view" src="" alt="Car Image" style="background: #eee; min-height: 400px;">
+            </div>
+
+
+            <!-- Core Content Grid -->
+            <div class="details-grid">
+
+                <!-- Left Side: Info -->
+                <div class="car-info">
+                    <h1 style="color: var(--turo-black); text-align: left; font-size: 40px; margin-bottom: 4px;">Loading
+                        Car Details...</h1>
+                    <p id="car-rating"
+                        style="font-size: 18px; font-weight: 600; color: var(--turo-grey); display: none;"></p>
+
+                    <div id="features-section"
+                        style="margin-top: 40px; border-top: 1px solid #eee; padding-top: 30px; display: none;">
+                        <h3 style="font-size: 22px; font-weight: 800; margin-bottom: 20px;">Car Features</h3>
+                        <div id="features-list" class="features-list">
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 40px; border-top: 1px solid #eee; padding-top: 30px;">
+                        <h3 style="font-size: 22px; font-weight: 800; margin-bottom: 10px;">Hosted by</h3>
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <svg id="host-avatar" width="60" height="60" viewBox="0 0 60 60" fill="none"
+                                xmlns="http://www.w3.org/2000/svg" style="border-radius: 50%; background: #f0f0f0;">
+                                <circle cx="30" cy="30" r="30" fill="#e0e0e0" />
+                                <path
+                                    d="M30 15C25.5817 15 22 18.5817 22 23C22 27.4183 25.5817 31 30 31C34.4183 31 38 27.4183 38 23C38 18.5817 34.4183 15 30 15Z"
+                                    fill="#b0b0b0" />
+                                <path d="M30 33C21.7157 33 15 39.7157 15 48V51H45V48C45 39.7157 38.2843 33 30 33Z"
+                                    fill="#b0b0b0" />
+                            </svg>
+                            <div>
+                                <p id="host-name" style="font-weight: 700; font-size: 18px;">...</p>
+                                <p style="color: var(--turo-grey); font-size: 14px;">Car Owner</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Side: Booking Card -->
+                <div class="booking-sidebar">
+                    <div class="booking-card">
+                        <p id="car-price" style="font-size: 24px; font-weight: 900; margin-bottom: 5px;"></p>
+                        <p style="font-size: 14px; font-weight: 600; color: var(--turo-grey); display: none;">Total
+                            price varies by duration</p>
+
+                        <button class="btn-book"
+                            onclick="alert('Booking feature is currently in progress. Stay tuned!')">Book Now</button>
+                        <p style="text-align: center; margin-top: 15px; font-size: 13px; color: var(--turo-grey);">
+                            Free cancellation until 24hrs before trip.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Login Modal (Same as index.html for demo) -->
+    <div id="login-modal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h2 style="font-size: 32px; font-weight: 800; margin-bottom: 30px;">Welcome back</h2>
+            <p style="margin-bottom: 30px; font-weight: 500;">You need to login to complete your booking.</p>
+            <form style="text-align: left;">
+                <button type="button" class="btn-book" onclick="simulateLogin()">Go to Login</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        // 1. Get the Car ID from the URL
+        var urlParams = new URLSearchParams(window.location.search);
+        var carId = urlParams.get('id');
+
+        // 2. Fetch all cars from storage
+        var cars = JSON.parse(localStorage.getItem('added_cars') || '[]');
+
+        // 3. Fetch from API
+        if (carId !== null) {
+            fetch('https://carhive.onrender.com/api/v1/cars/' + carId)
+                .then(res => res.json())
+                .then(car => {
+                    // Update Title and Name
+                    document.title = car.name + " - Turo Clone Details";
+                    document.querySelector('h1').innerText = car.name;
+
+                    // Update Image
+                    document.getElementById('main-view').src = car.photo || 'images/default-car.png';
+
+                    // Update Price with Rupees and Rate Type
+                    var priceElement = document.getElementById('car-price');
+                    priceElement.innerHTML = `₹${car.price_per_day} <span style="font-size: 16px; font-weight: 500; color: var(--turo-grey);">/ ${car.price_type || 'day'}</span>`;
+
+                    // Update Host Name
+                    var hostNameElement = document.getElementById('host-name');
+                    hostNameElement.innerText = car.host || (car.owner ? car.owner.full_name : "Car Owner");
+
+                    // Update Features (only if provided)
+                    if (car.features && car.features.trim()) {
+                        var featuresSection = document.getElementById('features-section');
+                        var featuresList = document.getElementById('features-list');
+                        featuresSection.style.display = 'block';
+                        featuresList.innerHTML = ''; // Clear loading
+
+                        var featuresArray = car.features.split(',');
+                        featuresArray.forEach(function (feature) {
+                            var featureDiv = document.createElement('div');
+                            featureDiv.className = 'feature-item';
+                            featureDiv.innerText = feature.trim();
+                            featuresList.appendChild(featureDiv);
+                        });
+                    }
+                })
+                .catch(err => {
+                    console.error("Error fetching car details:", err);
+                    document.querySelector('h1').innerText = "Car Not Found";
+                });
+        }
+    </script>
+</body>
+
+</html>
+
+

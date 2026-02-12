@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Listing | Turo Host</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+
+<body style="background: #f4f4f4;">
+    <header class="main-header container" style="background: transparent;">
+        <a href="index.html" class="turo-logo-badge">TURO</a>
+        <a href="dealer-dashboard.html" class="btn-secondary" style="background: white;">Cancel</a>
+    </header>
+
+    <main class="container" style="max-width: 700px; padding: 40px 0;">
+        <div class="modal-card" style="max-width: none; text-align: left;">
+            <h1 style="font-size: 32px; font-weight: 900; margin-bottom: 12px;">Edit your listing</h1>
+            <p style="color: var(--turo-muted); margin-bottom: 32px;">Update your vehicle details and pricing.</p>
+
+            <form id="editCarForm">
+                <div class="form-group">
+                    <label class="form-label">CAR BRAND & MODEL</label>
+                    <input type="text" id="make-model" class="form-input" required>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="form-group">
+                        <label class="form-label">LOCATION</label>
+                        <input type="text" id="location" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">PRICE PER DAY ($)</label>
+                        <input type="number" id="price" class="form-input" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">AVAILABILITY</label>
+                    <select id="status" class="form-select">
+                        <option value="true">Available</option>
+                        <option value="false">Booked / Maintenance</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; gap: 12px; margin-top: 32px;">
+                    <button type="submit" class="btn-primary-block" style="flex: 2;">Save Changes</button>
+                    <button type="button" onclick="deleteCar()" class="btn-primary-block"
+                        style="flex: 1; background: #ff4444;">Delete</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        auth.protect('DEALER');
+        const id = new URLSearchParams(window.location.search).get('id');
+
+        async function load() {
+            const car = await api.get(`/cars/${id}`);
+            document.getElementById('make-model').value = `${car.make} ${car.model}`;
+            document.getElementById('location').value = car.location;
+            document.getElementById('price').value = car.price_per_day;
+            document.getElementById('status').value = car.availability_status.toString();
+        }
+
+        document.getElementById('editCarForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const text = document.getElementById('make-model').value.split(' ');
+            const data = {
+                make: text[0] || 'Unknown',
+                model: text.slice(1).join(' ') || 'Car',
+                location: document.getElementById('location').value,
+                price_per_day: parseFloat(document.getElementById('price').value),
+                availability_status: document.getElementById('status').value === 'true'
+            };
+            const res = await api.put(`/cars/${id}`, data);
+            if (res.id) {
+                alert('Listing updated!');
+                window.location.href = 'dealer-dashboard.html';
+            }
+        });
+
+        async function deleteCar() {
+            if (confirm('Are you sure you want to delete this listing?')) {
+                await api.delete(`/cars/${id}`);
+                window.location.href = 'dealer-dashboard.html';
+            }
+        }
+
+        load();
+    </script>
+</body>
+
+</html>
+

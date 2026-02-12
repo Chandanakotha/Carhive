@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add a Car | Turo Clone</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body style="background: #f4f4f4;">
+
+    <div class="container">
+        <header>
+            <div class="logo"><a href="index.html">CarHive</a></div>
+            <div class="nav-right">
+                <a href="index.html" class="btn-secondary">Cancel</a>
+            </div>
+        </header>
+
+        <main
+            style="max-width: 600px; margin: 40px auto; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.05);">
+            <h1 style="font-size: 32px; font-weight: 800; margin-bottom: 30px;">List your car</h1>
+
+            <form id="add-car-form">
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-size: 12px; font-weight: 800; margin-bottom: 8px;">HOST
+                        NAME</label>
+                    <input type="text" id="host-name" class="cat-pill"
+                        style="width: 100%; border: 1px solid #ddd; background: #f9f9f9;" readonly>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-size: 12px; font-weight: 800; margin-bottom: 8px;">CAR NAME
+                        (Brand & Model)</label>
+                    <input type="text" id="car-name" placeholder="" required
+                        style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px;">
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-size: 12px; font-weight: 800; margin-bottom: 8px;">LOCATION /
+                        PLACE</label>
+                    <input type="text" id="car-place" placeholder="" required
+                        style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px;">
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-size: 12px; font-weight: 800; margin-bottom: 8px;">CONTACT
+                        NUMBER</label>
+                    <input type="text" id="car-contact" placeholder="" required
+                        style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px;">
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-size: 12px; font-weight: 800; margin-bottom: 8px;">CAR
+                        TYPE</label>
+                    <select id="car-type" required
+                        style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; background: white;">
+                        <option value="">Select car type</option>
+                        <option value="Sedan">Sedan</option>
+                        <option value="SUV">SUV</option>
+                        <option value="Hatchback">Hatchback</option>
+                        <option value="Luxury">Luxury</option>
+                        <option value="Electric">Electric</option>
+                        <option value="Convertible">Convertible</option>
+                    </select>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-size: 12px; font-weight: 800; margin-bottom: 8px;">NUMBER OF
+                        SEATERS</label>
+                    <select id="car-seaters" required
+                        style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; background: white;">
+                        <option value="">Select seaters</option>
+                        <option value="2">2 Seater</option>
+                        <option value="4">4 Seater</option>
+                        <option value="5">5 Seater</option>
+                        <option value="7">7 Seater</option>
+                        <option value="8">8+ Seater</option>
+                    </select>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-size: 12px; font-weight: 800; margin-bottom: 8px;">RENTAL
+                        PRICE</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="number" id="car-price" placeholder="" required min="1"
+                            style="flex: 2; padding: 12px; border: 1px solid #ddd; border-radius: 10px;">
+                        <select id="price-type" required
+                            style="flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 10px; background: white;">
+                            <option value="hour">Per Hour</option>
+                            <option value="day" selected>Per Day</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-size: 12px; font-weight: 800; margin-bottom: 8px;">CAR FEATURES
+                        (Optional)</label>
+                    <textarea id="car-features" placeholder=""
+                        style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; min-height: 80px; font-family: inherit;"></textarea>
+                    <p style="font-size: 11px; color: #777; margin-top: 5px;">*Separate features with commas. Leave
+                        blank if none.</p>
+                </div>
+
+                <div style="margin-bottom: 30px;">
+                    <label style="display: block; font-size: 12px; font-weight: 800; margin-bottom: 8px;">CAR
+                        PHOTO</label>
+                    <input type="file" id="car-photo" accept="image/*" required
+                        style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px;">
+                    <p style="font-size: 11px; color: #777; margin-top: 5px;">*Upload a photo of your car</p>
+                </div>
+
+                <button type="submit" class="btn-book">List Car Now</button>
+            </form>
+        </main>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        // Check if in edit mode - editId is now the backend car ID, not array index
+        var urlParams = new URLSearchParams(window.location.search);
+        var editId = urlParams.get('edit');
+        var isEditMode = editId !== null;
+        var existingPhoto = null;
+
+        // Autofill host name and contact from storage
+        var userJson = localStorage.getItem('turo_user');
+        if (userJson) {
+            var user = JSON.parse(userJson);
+            document.getElementById('host-name').value = user.name;
+            document.getElementById('car-contact').value = user.phone || '';
+        } else {
+            // Redir if not logged in
+            window.location.href = 'index.html';
+        }
+
+        // If in edit mode, fetch car data from backend
+        // WHY: We fetch from backend to ensure we're editing the latest version
+        if (isEditMode) {
+            fetch('https://carhive.onrender.com/api/v1/cars/' + editId)
+                .then(res => res.json())
+                .then(car => {
+                    document.getElementById('car-name').value = car.name;
+                    document.getElementById('car-place').value = car.location;
+                    document.getElementById('car-contact').value = car.contact;
+                    document.getElementById('car-type').value = car.car_type || 'Sedan';
+                    document.getElementById('car-seaters').value = car.seaters || '4';
+                    document.getElementById('car-price').value = car.price_per_day;
+                    document.getElementById('price-type').value = car.price_type || 'day';
+                    document.getElementById('car-features').value = car.features || '';
+                    existingPhoto = car.photo;
+
+                    // Make photo optional in edit mode
+                    document.getElementById('car-photo').removeAttribute('required');
+
+                    // Update button text
+                    document.querySelector('.btn-book').innerText = 'Update Car';
+                })
+                .catch(e => {
+                    console.error("Error loading car for edit:", e);
+                    alert("Could not load car data. Redirecting...");
+                    window.location.href = 'profile.html';
+                });
+        }
+
+        // Handle Form Submission
+        document.getElementById('add-car-form').onsubmit = function (e) {
+            e.preventDefault();
+
+            var fileInput = document.getElementById('car-photo');
+            var file = fileInput.files[0];
+
+            // In edit mode, photo is optional
+            if (!file && !isEditMode) {
+                alert('Please select a photo');
+                return;
+            }
+
+            function saveCarData(photoData) {
+                // WHY: We build the API payload directly - no localStorage needed
+                // Backend is the single source of truth
+                var apiPayload = {
+                    name: document.getElementById('car-name').value,
+                    location: document.getElementById('car-place').value,
+                    price_per_day: parseFloat(document.getElementById('car-price').value),
+                    photo: photoData,
+                    car_type: document.getElementById('car-type').value,
+                    seaters: parseInt(document.getElementById('car-seaters').value),
+                    price_type: document.getElementById('price-type').value,
+                    features: document.getElementById('car-features').value,
+                    contact: document.getElementById('car-contact').value,
+                    host: document.getElementById('host-name').value,
+                };
+
+                var url = 'https://carhive.onrender.com/api/v1/cars/';
+                var method = 'POST';
+
+                // WHY: In edit mode, we use PUT with the car ID from the URL
+                if (isEditMode) {
+                    url += editId;
+                    method = 'PUT';
+                }
+
+                // WHY: Send to backend with optional authentication token
+                var token = localStorage.getItem('token');
+                var headers = { 'Content-Type': 'application/json' };
+                if (token) headers['Authorization'] = 'Bearer ' + token;
+
+                fetch(url, {
+                    method: method,
+                    headers: headers,
+                    body: JSON.stringify(apiPayload)
+                })
+                    .then(async res => {
+                        if (res.ok) {
+                            return res.json();
+                        } else {
+                            const errorData = await res.json().catch(() => ({}));
+                            console.warn("Backend save failed:", errorData);
+                            alert("Failed to save car: " + (errorData.detail || "Server error"));
+                            throw new Error("Save failed");
+                        }
+                    })
+                    .then(backendCar => {
+                        window.location.href = 'index.html';
+                    })
+                    .catch(e => {
+                        console.error("Connection Error:", e);
+                        alert("Could not connect to the backend server. Please make sure it is running.");
+                    });
+            }
+
+            // If new photo uploaded, convert it with optimization
+            if (file) {
+                // Create an image element to load the file
+                var img = new Image();
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    img.onload = function () {
+                        // Create canvas for image optimization
+                        var canvas = document.createElement('canvas');
+                        var ctx = canvas.getContext('2d');
+
+                        // Set max dimensions while maintaining aspect ratio
+                        var maxWidth = 1200;
+                        var maxHeight = 1200;
+                        var width = img.width;
+                        var height = img.height;
+
+                        if (width > height) {
+                            if (width > maxWidth) {
+                                height = height * (maxWidth / width);
+                                width = maxWidth;
+                            }
+                        } else {
+                            if (height > maxHeight) {
+                                width = width * (maxHeight / height);
+                                height = maxHeight;
+                            }
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+
+                        // Draw image with high quality
+                        ctx.imageSmoothingEnabled = true;
+                        ctx.imageSmoothingQuality = 'high';
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        // Convert to base64 with good quality (0.9 = 90% quality)
+                        var optimizedImage = canvas.toDataURL('image/jpeg', 0.9);
+                        saveCarData(optimizedImage);
+                    };
+                    img.src = e.target.result;
+                };
+
+                reader.readAsDataURL(file);
+            } else {
+                // Use existing photo in edit mode
+                saveCarData(existingPhoto);
+            }
+        };
+    </script>
+</body>
+
+</html>
+
