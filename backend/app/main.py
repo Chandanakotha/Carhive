@@ -1,3 +1,4 @@
+from app.db.session import engine, Base
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.v1 import auth, cars, bookings, payments
@@ -40,3 +41,4 @@ async def root():
     }
 
 # Small TODO: Add custom exception handlers for a cleaner global error response format
+
