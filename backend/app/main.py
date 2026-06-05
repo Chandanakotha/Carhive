@@ -12,25 +12,45 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
-# Set up CORS
-# This is crucial for the frontend to talk to the backend
+# CORS setup
 origins = [str(origin).rstrip("/") for origin in settings.BACKEND_CORS_ORIGINS]
+
 if not origins:
     origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
-    allow_credentials=True if origins != ["*"] else False, # Credentials not allowed with wildcard
+    allow_credentials=True if origins != ["*"] else False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Include API Routers
-app.include_router(auth.router, prefix=f"{settings.API_V1_STR}/auth", tags=["Authentication"])
-app.include_router(cars.router, prefix=f"{settings.API_V1_STR}/cars", tags=["Cars"])
-app.include_router(bookings.router, prefix=f"{settings.API_V1_STR}/bookings", tags=["Bookings"])
-app.include_router(payments.router, prefix=f"{settings.API_V1_STR}/payments", tags=["Payments"])
+# Routers
+app.include_router(
+    auth.router,
+    prefix=f"{settings.API_V1_STR}/auth",
+    tags=["Authentication"]
+)
+
+app.include_router(
+    cars.router,
+    prefix=f"{settings.API_V1_STR}/cars",
+    tags=["Cars"]
+)
+
+app.include_router(
+    bookings.router,
+    prefix=f"{settings.API_V1_STR}/bookings",
+    tags=["Bookings"]
+)
+
+app.include_router(
+    payments.router,
+    prefix=f"{settings.API_V1_STR}/payments",
+    tags=["Payments"]
+)
+
 
 @app.get("/")
 async def root():
@@ -39,11 +59,26 @@ async def root():
         "docs": "/docs",
         "status": "Running"
     }
+
+
 @app.on_event("startup")
 async def on_startup():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+    try:
+        print("Starting app...")
 
-# Small TODO: Add custom exception handlers for a cleaner global error response format
+        async with engine.begin() as conn:
+            print("Connected to database...")
+
+            await conn.run_sync(Base.metadata.create_all)
+
+            print("Database tables created successfully.")
+
+    except Exception as e:
+        print(f"Startup Error: {e}")
+        raise e
 
 
+@app.on_event("shutdown")
+async def on_shutdown():
+    await engine.dispose()
+    print("Database connection closed.")
