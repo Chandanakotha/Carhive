@@ -3,8 +3,13 @@ from sqlalchemy.orm import declarative_base
 from app.core.config import settings
 
 # Using async engine for better scalability in production-like apps
-engine = create_async_engine(settings.SQLALCHEMY_DATABASE_URI, echo=False)
-
+engine = create_async_engine(
+    settings.SQLALCHEMY_DATABASE_URI,
+    echo=False,
+    connect_args={
+        "ssl": True
+    }
+)
 # SessionLocal is the factory for creating new DB sessions
 SessionLocal = async_sessionmaker(
     bind=engine,
